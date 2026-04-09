@@ -1,7 +1,7 @@
 # Steganography Demo — Spring Boot
 
-**LSB Steganography + AES-256 Encryption**  
-Hides secret messages inside PNG images. No database. No frontend. Pure REST APIs.
+**LSB Steganography + AES Encryption (256-bit key, JVM dependent)**
+Hides secret messages inside PNG images using encryption + data hiding.
 
 ---
 
@@ -11,7 +11,7 @@ Hides secret messages inside PNG images. No database. No frontend. Pure REST API
 ENCODE:
   plaintext message
       │
-      ▼  AES-256 (PBKDF2 key from password)
+      ▼  AES (PBKDF2 key from password)
   Base64 ciphertext
       │
       ▼  LSB steganography into PNG pixels
@@ -23,18 +23,27 @@ DECODE:
       ▼  LSB extraction from pixels
   Base64 ciphertext
       │
-      ▼  AES-256 decryption (same password)
+      ▼  AES decryption (same password)
   original plaintext message
 ```
 
 ### LSB Technique (Least Significant Bit)
-Each pixel has R, G, B channels (0–255 each). The last bit (LSB) of a channel
-value changes the colour by only ±1 — completely invisible to the human eye.
 
-We replace the LSB of R, G, B for each pixel with one bit of our secret data:
-- 3 bits per pixel
-- First 32 bits = payload length header (4-byte int)
-- Remaining bits = AES-encrypted message bytes
+Each pixel has R, G, B channels (0–255 each). The last bit (LSB) changes colour by only ±1 — invisible to the human eye.
+
+* 3 bits per pixel (R, G, B)
+* First 32 bits → payload length
+* Remaining bits → encrypted message
+
+---
+
+## Architecture
+
+```
+Client → Controller → Service → Util
+                         ├── CryptoUtil (AES encryption/decryption)
+                         └── SteganographyUtil (LSB encoding/decoding)
+```
 
 ---
 
@@ -42,14 +51,14 @@ We replace the LSB of R, G, B for each pixel with one bit of our secret data:
 
 ```
 src/main/java/com/stego/
-├── SteganographyApplication.java     ← Spring Boot entry point
+├── SteganographyApplication.java
 ├── controller/
-│   └── StegoController.java          ← REST endpoints (/encode, /decode)
+│   └── StegoController.java
 ├── service/
-│   └── StegoService.java             ← Orchestration logic
+│   └── StegoService.java
 └── util/
-    ├── CryptoUtil.java               ← AES-256 encrypt/decrypt (PBKDF2 key)
-    └── SteganographyUtil.java        ← LSB encode/decode on BufferedImage
+    ├── CryptoUtil.java
+    └── SteganographyUtil.java
 ```
 
 ---
@@ -59,17 +68,11 @@ src/main/java/com/stego/
 **Prerequisites:** Java 21, Maven 3.8+
 
 ```bash
-# 1. Clone / download the project
-cd steganography-demo
-
-# 2. Build
 mvn clean package
-
-# 3. Run
 java -jar target/steganography-demo-1.0.0.jar
-
-# Server starts at: http://localhost:8080
 ```
+
+Server: http://localhost:8080
 
 ---
 
@@ -77,107 +80,113 @@ java -jar target/steganography-demo-1.0.0.jar
 
 ### POST /encode
 
-Hides an encrypted message inside a PNG image.
+| Field    | Type | Description         |
+| -------- | ---- | ------------------- |
+| image    | File | PNG image           |
+| message  | Text | Secret message      |
+| password | Text | Encryption password |
 
-| Field    | Type | Description                  |
-|----------|------|------------------------------|
-| image    | File | Carrier PNG image            |
-| message  | Text | The secret message to hide   |
-| password | Text | Password for AES encryption  |
-
-**Response:** PNG image (binary). Save it — this is your stego-image.
+Response: PNG image (stego-image)
 
 ---
 
 ### POST /decode
 
-Extracts and decrypts a hidden message from a stego-image.
+| Field    | Type | Description   |
+| -------- | ---- | ------------- |
+| image    | File | Stego image   |
+| password | Text | Same password |
 
-| Field    | Type | Description                                  |
-|----------|------|----------------------------------------------|
-| image    | File | The stego PNG from /encode                   |
-| password | Text | Same password used during encoding           |
+Response: Original message
 
-**Response:** Plain text — the original secret message.
+---
+
+## Curl Usage (Alternative to Postman)
+
+```bash
+curl -X POST http://localhost:8080/encode \
+  -F "image=@input.png" \
+  -F "message=Hello" \
+  -F "password=secret" \
+  --output stego.png
+```
 
 ---
 
 ## Postman Instructions
 
-### Step 1 — Encode (hide a message)
+### Encode
 
-1. Open Postman → New Request
-2. Method: **POST**
-3. URL: `http://localhost:8080/encode`
-4. Go to **Body** tab → select **form-data**
-5. Add three rows:
+* POST → http://localhost:8080/encode
+* Body → form-data:
 
-   | KEY      | TYPE | VALUE                          |
-   |----------|------|--------------------------------|
-   | image    | File | *(click "Select Files" → pick any .png)* |
-   | message  | Text | `Meet me at midnight`          |
-   | password | Text | `mySecret123`                  |
+   * image (file)
+   * message (text)
+   * password (text)
+* Save response as PNG
 
-6. Click **Send**
-7. In the response panel → click **"Save Response"** → **"Save to a file"**
-8. Save as `stego_output.png`
+### Decode
 
----
+* POST → http://localhost:8080/decode
+* Body → form-data:
 
-### Step 2 — Decode (extract the message)
-
-1. New Request → Method: **POST**
-2. URL: `http://localhost:8080/decode`
-3. **Body** → **form-data**
-
-   | KEY      | TYPE | VALUE                                |
-   |----------|------|--------------------------------------|
-   | image    | File | *(select `stego_output.png` from step 1)* |
-   | password | Text | `mySecret123`                        |
-
-4. Click **Send**
-5. Response body: `Meet me at midnight` ✓
+   * image (file)
+   * password (text)
 
 ---
 
-### Step 3 — Test Wrong Password
+## Demo
 
-Same as Step 2 but use a different password (e.g., `wrongPass`).
-
-**Expected response (400):**
-```
-Decode Error: Wrong password or corrupted data. Please check your password and try again.
-```
+* Input Image → original.png
+* Output Image → stego_output.png
+* Decoded Message → "Meet me at midnight"
 
 ---
 
-## Image Size Requirements
+## Image Capacity
 
-The carrier image must be large enough to hold the message.
-
-| Image Size | Max Message (approx.) |
-|------------|----------------------|
-| 100×100    | ~3 700 bytes         |
-| 512×512    | ~98 000 bytes        |
-| 1920×1080  | ~777 000 bytes       |
-
-If the image is too small, the API returns:
-```
-Encode Error: Image too small! Can hold X bytes but payload is Y bytes.
-```
+| Image Size | Max Message |
+| ---------- | ----------- |
+| 100×100    | ~3.7 KB     |
+| 512×512    | ~98 KB      |
+| 1920×1080  | ~777 KB     |
 
 ---
 
-## Security Notes (Exam Context)
+## Security Details
 
-| Feature          | Implementation                          |
-|------------------|-----------------------------------------|
-| Encryption algo  | AES-256 (CBC mode, PKCS5 padding)       |
-| Key derivation   | PBKDF2WithHmacSHA256, 65 536 iterations |
-| Steganography    | LSB — 1 bit per RGB channel per pixel   |
-| Wrong password   | BadPaddingException → 400 response      |
-| Image format     | PNG only (JPEG lossy compression destroys LSB data!) |
+| Feature        | Implementation                           |
+| -------------- | ---------------------------------------- |
+| Encryption     | AES (CBC, PKCS5Padding)                  |
+| Key Derivation | PBKDF2WithHmacSHA256 (65,536 iterations) |
+| Steganography  | LSB (3 bits per pixel)                   |
+| Wrong Password | Returns 400 error                        |
+| Image Format   | PNG only                                 |
 
 ---
 
-*Built for: Renewable Energy Technologies / CSE Elective — ANITS*
+## Error Handling
+
+* Wrong password → 400 Bad Request
+* Image too small → 400 Bad Request
+* Invalid file → 400 Bad Request
+
+---
+
+## Limitations
+
+* Supports only PNG images
+* No compression before embedding
+* Large messages require large images
+* No authentication system
+
+---
+
+## Tech Stack
+
+* Java 21
+* Spring Boot
+* Maven
+
+---
+
