@@ -5,39 +5,32 @@ Hides secret messages inside PNG images using encryption + data hiding.
 
 ---
 
-## 🌐 Live Deployment
+## 🌐 Live Application
 
-Base URL:
+🔗 **Base URL**
+👉 [Open Application](https://stegnography-1-jo07.onrender.com)
 
-```
-https://stegnography-1-jo07.onrender.com
-```
+---
 
-### 🔗 Live APIs
+## 🚀 Live API Access
 
-* Encode:
+* 🔐 **Encode API** *(POST only)*
+  👉 https://stegnography-1-jo07.onrender.com/encode
 
-```
-https://stegnography-1-jo07.onrender.com/encode
-```
+* 🔓 **Decode API** *(POST only)*
+  👉 https://stegnography-1-jo07.onrender.com/decode
 
-* Decode:
+> ⚠️ Note: These are POST APIs and cannot be used directly in a browser. Use Postman or curl.
 
-```
-https://stegnography-1-jo07.onrender.com/decode
-```
+---
 
-### 📘 Swagger (if enabled)
+## 📘 Swagger UI (API Documentation)
 
-```
-https://stegnography-1-jo07.onrender.com/swagger-ui/index.html
-```
+👉 [Open Swagger UI](https://stegnography-1-jo07.onrender.com/swagger-ui/index.html)
 
-```
-https://stegnography-1-jo07.onrender.com/v3/api-docs
-```
+👉 [View API Docs (JSON)](https://stegnography-1-jo07.onrender.com/v3/api-docs)
 
-> Note: Swagger works only if the dependency is configured correctly.
+> ⚠️ Swagger works only if enabled in the deployed backend.
 
 ---
 
@@ -85,6 +78,22 @@ Client → Controller → Service → Util
 
 ---
 
+## Project Structure
+
+```
+src/main/java/com/stego/
+├── SteganographyApplication.java
+├── controller/
+│   └── StegoController.java
+├── service/
+│   └── StegoService.java
+└── util/
+    ├── CryptoUtil.java
+    └── SteganographyUtil.java
+```
+
+---
+
 ## Running the Application (Local)
 
 **Prerequisites:** Java 21, Maven 3.8+
@@ -95,10 +104,7 @@ java -jar target/steganography-demo-1.0.0.jar
 ```
 
 Local Server:
-
-```
 http://localhost:8080
-```
 
 ---
 
@@ -129,21 +135,40 @@ Response: Original message
 
 ## Postman Usage (Recommended)
 
-### 🔹 Encode (Live)
+### Encode
 
-* POST →
+* Method: POST
 
-```
-https://stegnography-1-jo07.onrender.com/encode
-```
+* URL:
+  https://stegnography-1-jo07.onrender.com/encode
 
-### 🔹 Decode (Live)
+* Body → form-data:
 
-* POST →
+| KEY      | TYPE | VALUE               |
+| -------- | ---- | ------------------- |
+| image    | File | input.png           |
+| message  | Text | Meet me at midnight |
+| password | Text | secret123           |
 
-```
-https://stegnography-1-jo07.onrender.com/decode
-```
+👉 Save response as `stego_output.png`
+
+---
+
+### Decode
+
+* Method: POST
+
+* URL:
+  https://stegnography-1-jo07.onrender.com/decode
+
+* Body → form-data:
+
+| KEY      | TYPE | VALUE            |
+| -------- | ---- | ---------------- |
+| image    | File | stego_output.png |
+| password | Text | secret123        |
+
+👉 Response: `Meet me at midnight`
 
 ---
 
