@@ -15,10 +15,10 @@ Hides secret messages inside PNG images using encryption + data hiding.
 ## 🚀 Live API Access
 
 * 🔐 **Encode API** *(POST only)*
-  - https://stegnography-1-jo07.onrender.com/encode
+  ``` https://stegnography-1-jo07.onrender.com/encode```
 
 * 🔓 **Decode API** *(POST only)*
-  - https://stegnography-1-jo07.onrender.com/decode
+  ```https://stegnography-1-jo07.onrender.com/decode```
 
 > ⚠️ Note: These are POST APIs and cannot be used directly in a browser. Use Postman or curl.
 
