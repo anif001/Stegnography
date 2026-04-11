@@ -5,6 +5,42 @@ Hides secret messages inside PNG images using encryption + data hiding.
 
 ---
 
+## 🌐 Live Deployment
+
+Base URL:
+
+```
+https://stegnography-1-jo07.onrender.com
+```
+
+### 🔗 Live APIs
+
+* Encode:
+
+```
+https://stegnography-1-jo07.onrender.com/encode
+```
+
+* Decode:
+
+```
+https://stegnography-1-jo07.onrender.com/decode
+```
+
+### 📘 Swagger (if enabled)
+
+```
+https://stegnography-1-jo07.onrender.com/swagger-ui/index.html
+```
+
+```
+https://stegnography-1-jo07.onrender.com/v3/api-docs
+```
+
+> Note: Swagger works only if the dependency is configured correctly.
+
+---
+
 ## How It Works
 
 ```
@@ -27,7 +63,9 @@ DECODE:
   original plaintext message
 ```
 
-### LSB Technique (Least Significant Bit)
+---
+
+## LSB Technique (Least Significant Bit)
 
 Each pixel has R, G, B channels (0–255 each). The last bit (LSB) changes colour by only ±1 — invisible to the human eye.
 
@@ -47,23 +85,7 @@ Client → Controller → Service → Util
 
 ---
 
-## Project Structure
-
-```
-src/main/java/com/stego/
-├── SteganographyApplication.java
-├── controller/
-│   └── StegoController.java
-├── service/
-│   └── StegoService.java
-└── util/
-    ├── CryptoUtil.java
-    └── SteganographyUtil.java
-```
-
----
-
-## Running the Application
+## Running the Application (Local)
 
 **Prerequisites:** Java 21, Maven 3.8+
 
@@ -72,7 +94,11 @@ mvn clean package
 java -jar target/steganography-demo-1.0.0.jar
 ```
 
-Server: http://localhost:8080
+Local Server:
+
+```
+http://localhost:8080
+```
 
 ---
 
@@ -101,37 +127,35 @@ Response: Original message
 
 ---
 
-## Curl Usage (Alternative to Postman)
+## Postman Usage (Recommended)
+
+### 🔹 Encode (Live)
+
+* POST →
+
+```
+https://stegnography-1-jo07.onrender.com/encode
+```
+
+### 🔹 Decode (Live)
+
+* POST →
+
+```
+https://stegnography-1-jo07.onrender.com/decode
+```
+
+---
+
+## Curl Usage
 
 ```bash
-curl -X POST http://localhost:8080/encode \
+curl -X POST https://stegnography-1-jo07.onrender.com/encode \
   -F "image=@input.png" \
   -F "message=Hello" \
   -F "password=secret" \
   --output stego.png
 ```
-
----
-
-## Postman Instructions
-
-### Encode
-
-* POST → http://localhost:8080/encode
-* Body → form-data:
-
-   * image (file)
-   * message (text)
-   * password (text)
-* Save response as PNG
-
-### Decode
-
-* POST → http://localhost:8080/decode
-* Body → form-data:
-
-   * image (file)
-   * password (text)
 
 ---
 
@@ -178,7 +202,7 @@ curl -X POST http://localhost:8080/encode \
 * Supports only PNG images
 * No compression before embedding
 * Large messages require large images
-* No authentication system
+* No frontend (tested via Postman)
 
 ---
 
@@ -190,3 +214,4 @@ curl -X POST http://localhost:8080/encode \
 
 ---
 
+*Built for: CNS / CSE — ANITS*
