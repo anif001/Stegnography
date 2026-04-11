@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
+
 /**
  * StegoController — Exposes the two steganography REST endpoints.
  *
@@ -27,6 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/")          // base path; endpoints are /encode and /decode
 public class StegoController {
+
+
+    @GetMapping("/test")
+    public String test() {
+        return "API is working";
+    }
 
     private final StegoService stegoService;
 
