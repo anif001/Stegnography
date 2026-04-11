@@ -8,17 +8,17 @@ Hides secret messages inside PNG images using encryption + data hiding.
 ## 🌐 Live Application
 
 🔗 **Base URL**
-👉 [Open Application](https://stegnography-1-jo07.onrender.com)
+  - [Open Application](https://stegnography-1-jo07.onrender.com)
 
 ---
 
 ## 🚀 Live API Access
 
 * 🔐 **Encode API** *(POST only)*
-  👉 https://stegnography-1-jo07.onrender.com/encode
+  - https://stegnography-1-jo07.onrender.com/encode
 
 * 🔓 **Decode API** *(POST only)*
-  👉 https://stegnography-1-jo07.onrender.com/decode
+  - https://stegnography-1-jo07.onrender.com/decode
 
 > ⚠️ Note: These are POST APIs and cannot be used directly in a browser. Use Postman or curl.
 
@@ -26,9 +26,9 @@ Hides secret messages inside PNG images using encryption + data hiding.
 
 ## 📘 Swagger UI (API Documentation)
 
-👉 [Open Swagger UI](https://stegnography-1-jo07.onrender.com/swagger-ui/index.html)
+- [Open Swagger UI](https://stegnography-1-jo07.onrender.com/swagger-ui/index.html)
 
-👉 [View API Docs (JSON)](https://stegnography-1-jo07.onrender.com/v3/api-docs)
+- [View API Docs (JSON)](https://stegnography-1-jo07.onrender.com/v3/api-docs)
 
 > ⚠️ Swagger works only if enabled in the deployed backend.
 
