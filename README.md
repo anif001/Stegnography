@@ -8,7 +8,7 @@ Hides secret messages inside PNG images using encryption + data hiding.
 ## 🌐 Live Application
 
 🔗 **Base URL**
-  - [Open Application](https://stegnography-1-jo07.onrender.com)
+  - [Open Application](https://stegnography-1-jo07.onrender.com/swagger-ui/index.html)
 
 ---
 
